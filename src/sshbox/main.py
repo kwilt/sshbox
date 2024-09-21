@@ -1,14 +1,16 @@
-import click
 import os
-import sys
-import json
 import subprocess
+import sys
+
+import click
 from dotenv import load_dotenv
+
 from .json_config import (
     load_json_config, save_json_config, get_groups, get_servers_in_group, get_server_config,
     create_sample_config, add_group, add_server, remove_group, remove_server,
     edit_group, edit_server
 )
+
 
 def select_with_click(options, prompt_text):
     click.echo(prompt_text)
@@ -186,7 +188,7 @@ def remove():
             return
         
         servers = get_servers_in_group(configs, group)
-        server = select_with_click(servers, f"Select a server to remove from group '{group}':")
+        server = select_with_click(servers, f"Select a server to remove:")
         if not server:
             click.echo("No server selected. Aborting.")
             return
@@ -225,7 +227,7 @@ def edit():
             return
         
         servers = get_servers_in_group(configs, group)
-        old_server = select_with_click(servers, f"Select a server to edit from group '{group}':")
+        old_server = select_with_click(servers, f"Select a server to edit:")
         if not old_server:
             click.echo("No server selected. Aborting.")
             return
