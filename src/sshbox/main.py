@@ -64,7 +64,7 @@ def cli():
 def list_groups():
     """List all available server groups and allow selection."""
     groups = get_groups(configs)
-    group = select_with_click(groups, "Select a server group:")
+    group = select_with_click(groups, "Select Group:")
     if group:
         select_and_connect_to_server(group)
     else:
@@ -73,7 +73,7 @@ def list_groups():
 def select_and_connect_to_server(group):
     """Select a server from the chosen group and initiate SSH connection."""
     servers = get_servers_in_group(configs, group)
-    server = select_with_click(servers, f"Select a server from {group}:")
+    server = select_with_click(servers, f"Select Connection:")
     
     if not server:
         click.echo("No server selected.")
