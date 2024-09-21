@@ -4,31 +4,29 @@ import sys
 import json
 import subprocess
 from dotenv import load_dotenv
-from prompt_toolkit import prompt
-from prompt_toolkit.completion import WordCompleter
-from prompt_toolkit.shortcuts import radiolist_dialog
 from .json_config import load_json_config, get_groups, get_servers_in_group, get_server_config, create_sample_config
 
-def select_with_radiolist(title, options):
-    result = radiolist_dialog(
-        title=title,
-        text="Use arrow keys to move, Space to select, Enter to confirm.",
-        values=[(option, option) for option in options]
-    ).run()
-    return result
-
-def select_with_prompt(prompt_text, options):
-    completer = WordCompleter(options, ignore_case=True)
-    while True:
+def select_with_click(options, prompt_text):
+    click.echo(prompt_text)
+    for idx, option in enumerate(options, start=1):
+        click.echo(f"{idx}. {option}")
+    
+    def get_character():
+        import sys, tty, termios
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
         try:
-            selection = prompt(f"{prompt_text}: ", completer=completer)
-            if selection in options:
-                return selection
-            elif selection.isdigit() and 0 < int(selection) <= len(options):
-                return options[int(selection) - 1]
-            else:
-                print(f"Invalid selection. Please choose from {', '.join(options)} or enter a number.")
-        except (EOFError, KeyboardInterrupt):
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
+
+    while True:
+        char = get_character()
+        if char.isdigit() and 0 < int(char) <= len(options):
+            return options[int(char) - 1]
+        elif char in ['\x03', '\x04']:  # Ctrl+C or Ctrl+D
             return None
 
 # Load environment variables from .env file
@@ -66,7 +64,7 @@ def cli():
 def list_groups():
     """List all available server groups and allow selection."""
     groups = get_groups(configs)
-    group = select_with_radiolist("Select a server group", groups)
+    group = select_with_click(groups, "Select a server group:")
     if group:
         select_and_connect_to_server(group)
     else:
@@ -75,7 +73,7 @@ def list_groups():
 def select_and_connect_to_server(group):
     """Select a server from the chosen group and initiate SSH connection."""
     servers = get_servers_in_group(configs, group)
-    server = select_with_prompt(f"Select a server from group '{group}'", servers)
+    server = select_with_click(servers, f"Select a server from group '{group}':")
     
     if not server:
         click.echo("No server selected.")
