@@ -11,7 +11,6 @@ from .json_config import (
     edit_group, edit_server
 )
 
-=
 def select_with_click(options, prompt_text):
     click.echo(prompt_text)
     for index, option in enumerate(options, start=1):
