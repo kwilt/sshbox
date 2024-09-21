@@ -84,7 +84,7 @@ def add():
             click.echo(f"Error: {str(e)}")
     else:
         groups = get_groups(configs)
-        group = select_option(groups, "Select Group For New Host:")
+        group = select_option(groups, "Select Group For New Host")
         
         host = click.prompt("Enter Alias For Connection")
         hostname = click.prompt("Enter Hostname")
@@ -112,19 +112,19 @@ def remove():
     
     if choice == 'Group':
         groups = get_groups(configs)
-        group = select_option(groups, "Select Group For Removal:")
+        group = select_option(groups, "Select Group For Removal")
         
         try:
             remove_group(configs, group)
-            click.echo(f"Group '{group}' removed successfully.")
+            click.echo(f"Group '{group}' removed successfully")
         except ValueError as e:
             click.echo(f"Error: {str(e)}")
     else:
         groups = get_groups(configs)
-        group = select_option(groups, "Select Group:")
+        group = select_option(groups, "Select Group")
         
         hosts = get_hosts_in_group(configs, group)
-        host = select_option(hosts, f"Select Host For Removal:")
+        host = select_option(hosts, f"Select Host For Removal")
         
         try:
             remove_host(configs, group, host)
@@ -141,7 +141,7 @@ def edit():
     
     if choice == 'Group':
         groups = get_groups(configs)
-        old_group = select_option(groups, "Select Group To Edit:")
+        old_group = select_option(groups, "Select Group To Edit")
         
         new_group = click.prompt(f"Enter New Name For Group: '{old_group}'")
         try:
@@ -151,10 +151,10 @@ def edit():
             click.echo(f"Error: {str(e)}")
     else:
         groups = get_groups(configs)
-        group = select_option(groups, "Select Group To Edit:")
+        group = select_option(groups, "Select Group To Edit")
         
         hosts = get_hosts_in_group(configs, group)
-        old_host = select_option(hosts, f"Select Host To Edit:")
+        old_host = select_option(hosts, f"Select Host To Edit")
         
         new_host = click.prompt(f"Enter New Name For Host: '{old_host}' (press Enter to keep the same name)", default=old_host)
         hostname = click.prompt("Enter New Hostname", default=configs[group][old_host]['hostname'])
