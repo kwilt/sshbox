@@ -33,7 +33,7 @@ def select_with_click(options, prompt_text):
 load_dotenv()
 
 # Get the JSON config file path from environment variable or use a default
-config_file = os.getenv('JSON_CONFIG_FILE_PATH', os.path.expanduser('~/.sshbox_config.json'))
+config_file = os.getenv('JSON_CONFIG_FILE_PATH', os.path.expanduser('~/.ssh/sshbox.json'))
 
 try:
     # Load the JSON configuration
@@ -73,7 +73,7 @@ def list_groups():
 def select_and_connect_to_server(group):
     """Select a server from the chosen group and initiate SSH connection."""
     servers = get_servers_in_group(configs, group)
-    server = select_with_click(servers, f"Select a server from group '{group}':")
+    server = select_with_click(servers, f"Select a server from {group}:")
     
     if not server:
         click.echo("No server selected.")
@@ -84,7 +84,7 @@ def select_and_connect_to_server(group):
     username = server_config['username']
     port = server_config.get('port', 22)
     
-    click.echo(f"Connecting to {username}@{hostname}:{port}...")
+    click.echo(f"Connecting to {username}@{hostname}")
     
     try:
         subprocess.run(['ssh', f'{username}@{hostname}', '-p', str(port)], check=True)
