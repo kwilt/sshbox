@@ -167,14 +167,11 @@ def edit():
 @cli.command()
 def remove():
     """Remove a group or server from the configuration."""
-    choice = click.prompt("Do you want to remove a group or a server? (group/server)", type=click.Choice(['group', 'server']))
+    choice = select_option(['group', 'server'], "Do you want to remove a group or a server?")
     
     if choice == 'group':
         groups = get_groups(configs)
-        group = select_with_click(groups, "Select a group to remove:")
-        if not group:
-            click.echo("No group selected. Aborting.")
-            return
+        group = select_option(groups, "Select a group to remove:")
         
         try:
             remove_group(configs, group)
@@ -183,16 +180,10 @@ def remove():
             click.echo(f"Error: {str(e)}")
     else:
         groups = get_groups(configs)
-        group = select_with_click(groups, "Select a group:")
-        if not group:
-            click.echo("No group selected. Aborting.")
-            return
+        group = select_option(groups, "Select a group:")
         
         servers = get_servers_in_group(configs, group)
-        server = select_with_click(servers, f"Select a server to remove:")
-        if not server:
-            click.echo("No server selected. Aborting.")
-            return
+        server = select_option(servers, f"Select a server to remove:")
         
         try:
             remove_server(configs, group, server)
@@ -205,14 +196,11 @@ def remove():
 @cli.command()
 def edit():
     """Edit a group or server in the configuration."""
-    choice = click.prompt("Do you want to edit a group or a server? (group/server)", type=click.Choice(['group', 'server']))
+    choice = select_option(['group', 'server'], "Do you want to edit a group or a server?")
     
     if choice == 'group':
         groups = get_groups(configs)
-        old_group = select_with_click(groups, "Select a group to edit:")
-        if not old_group:
-            click.echo("No group selected. Aborting.")
-            return
+        old_group = select_option(groups, "Select a group to edit:")
         
         new_group = click.prompt(f"Enter the new name for group '{old_group}'")
         try:
@@ -222,16 +210,10 @@ def edit():
             click.echo(f"Error: {str(e)}")
     else:
         groups = get_groups(configs)
-        group = select_with_click(groups, "Select a group:")
-        if not group:
-            click.echo("No group selected. Aborting.")
-            return
+        group = select_option(groups, "Select a group:")
         
         servers = get_servers_in_group(configs, group)
-        old_server = select_with_click(servers, f"Select a server to edit:")
-        if not old_server:
-            click.echo("No server selected. Aborting.")
-            return
+        old_server = select_option(servers, f"Select a server to edit:")
         
         new_server = click.prompt(f"Enter the new name for server '{old_server}' (press Enter to keep the same name)", default=old_server)
         hostname = click.prompt("Enter the new hostname", default=configs[group][old_server]['hostname'])
