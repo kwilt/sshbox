@@ -8,8 +8,8 @@ from .json_config import load_json_config, get_groups, get_servers_in_group, get
 
 def select_with_click(options, prompt_text):
     click.echo(prompt_text)
-    for idx, option in enumerate(options, start=1):
-        click.echo(f"{idx}. {option}")
+    for index, option in enumerate(options, start=1):
+        click.echo(f"{index}. {option}")
     
     def get_character():
         import sys, tty, termios
@@ -23,10 +23,10 @@ def select_with_click(options, prompt_text):
         return character
 
     while True:
-        char = get_character()
-        if char.isdigit() and 0 < int(char) <= len(options):
-            return options[int(char) - 1]
-        elif char in ['\x03', '\x04']:  # Ctrl+C or Ctrl+D
+        user_input = get_character()
+        if user_input.isdigit() and 0 < int(user_input) <= len(options):
+            return options[int(user_input) - 1]
+        elif user_input in ['\x03', '\x04']:  # Ctrl+C or Ctrl+D
             return None
 
 # Load environment variables from .env file
