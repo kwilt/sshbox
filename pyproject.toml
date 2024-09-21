@@ -24,4 +24,4 @@ build-backend = "pdm.backend"
 distribution = true
 
 [project.scripts]
-sshbox = "sshbox.main:list_groups"
+sshbox = "sshbox.main:cli"
