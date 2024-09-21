@@ -64,8 +64,8 @@ def cli():
     pass
 
 @cli.command()
-def list_groups():
-    """List all available server groups and allow selection."""
+def connect():
+    """Connect to a server."""
     groups = get_groups(configs)
     group = select_with_click(groups, "Select Group:")
     if group:
@@ -97,21 +97,27 @@ def select_and_connect_to_server(group):
         click.echo("SSH client not found. Please make sure SSH is installed on your system.", err=True)
 
 @cli.command()
-@click.argument('group')
-def list_servers(group):
-    """List all servers in a specific group."""
-    if group not in configs:
-        click.echo(f"Group '{group}' not found.")
-        return
-    servers = get_servers_in_group(configs, group)
-    click.echo(f"Servers in group '{group}':")
-    for idx, server in enumerate(servers, start=1):
-        click.echo(f"{idx}. {server}")
+@click.argument('group', required=False)
+def list(group):
+    """List all groups or servers in a specific group."""
+    if group:
+        if group not in configs:
+            click.echo(f"Group '{group}' not found.")
+            return
+        servers = get_servers_in_group(configs, group)
+        click.echo(f"Servers in group '{group}':")
+        for idx, server in enumerate(servers, start=1):
+            click.echo(f"{idx}. {server}")
+    else:
+        groups = get_groups(configs)
+        click.echo("Available groups:")
+        for idx, g in enumerate(groups, start=1):
+            click.echo(f"{idx}. {g}")
 
 @cli.command()
 @click.argument('group')
 @click.argument('server')
-def show_config(group, server):
+def show(group, server):
     """Show configuration for a specific server in a group."""
     if group not in configs:
         click.echo(f"Group '{group}' not found.")
@@ -250,13 +256,5 @@ def edit():
     
     save_json_config(configs, config_file)
 
-# Add commands to cli group
-cli.add_command(list_groups)
-cli.add_command(list_servers)
-cli.add_command(show_config)
-cli.add_command(add)
-cli.add_command(remove)
-cli.add_command(edit)
-
 if __name__ == '__main__':
-    cli(prog_name="sshbox")
+    cli()
