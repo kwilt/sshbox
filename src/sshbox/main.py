@@ -251,5 +251,13 @@ def edit():
     
     save_json_config(configs, config_file)
 
+# Make sure all commands are part of the cli group
+cli.add_command(list_groups)
+cli.add_command(list_servers)
+cli.add_command(show_config)
+cli.add_command(add)
+cli.add_command(remove)
+cli.add_command(edit)
+
 if __name__ == '__main__':
     cli(prog_name="sshbox")
