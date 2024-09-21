@@ -96,22 +96,28 @@ def add_host_to_group(group=None):
         groups = get_groups(configs)
         group = select_option(groups, "Select Group For New Host")
     
-    host = click.prompt("Enter Alias For Connection")
-    hostname = click.prompt("Enter Hostname")
-    username = click.prompt("Enter Username")
-    port = click.prompt("Enter Port", default=22, type=int)
-    
-    host_config = {
-        "hostname": hostname,
-        "username": username,
-        "port": port
-    }
-    
-    try:
-        add_host(configs, group, host, host_config)
-        click.echo(f"'{host}' added successfully to '{group}'")
-    except ValueError as e:
-        click.echo(f"Error: {str(e)}")
+    while True:
+        host = click.prompt("Enter Alias For Connection")
+        hostname = click.prompt("Enter Hostname")
+        username = click.prompt("Enter Username")
+        port = click.prompt("Enter Port", default=22, type=int)
+        
+        host_config = {
+            "hostname": hostname,
+            "username": username,
+            "port": port
+        }
+        
+        try:
+            add_host(configs, group, host, host_config)
+            click.echo(f"'{host}' added successfully to '{group}'")
+            
+            if not click.confirm("Would you like to add another host to this group?"):
+                break
+        except ValueError as e:
+            click.echo(f"Error: {str(e)}")
+            if not click.confirm("Would you like to try adding a host again?"):
+                break
 
 @cli.command()
 def remove():
