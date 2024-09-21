@@ -4,7 +4,32 @@ import sys
 import json
 import subprocess
 from dotenv import load_dotenv
+from prompt_toolkit import prompt
+from prompt_toolkit.completion import WordCompleter
+from prompt_toolkit.shortcuts import radiolist_dialog
 from .json_config import load_json_config, get_groups, get_servers_in_group, get_server_config, create_sample_config
+
+def select_with_radiolist(title, options):
+    result = radiolist_dialog(
+        title=title,
+        text="Use arrow keys to move, Space to select, Enter to confirm.",
+        values=[(option, option) for option in options]
+    ).run()
+    return result
+
+def select_with_prompt(prompt_text, options):
+    completer = WordCompleter(options, ignore_case=True)
+    while True:
+        try:
+            selection = prompt(f"{prompt_text}: ", completer=completer)
+            if selection in options:
+                return selection
+            elif selection.isdigit() and 0 < int(selection) <= len(options):
+                return options[int(selection) - 1]
+            else:
+                print(f"Invalid selection. Please choose from {', '.join(options)} or enter a number.")
+        except (EOFError, KeyboardInterrupt):
+            return None
 
 # Load environment variables from .env file
 load_dotenv()
@@ -41,22 +66,21 @@ def cli():
 def list_groups():
     """List all available server groups and allow selection."""
     groups = get_groups(configs)
-    group = click.prompt(
-        "Select a server group",
-        type=click.Choice(groups),
-        show_choices=True
-    )
-    select_and_connect_to_server(group)
+    group = select_with_radiolist("Select a server group", groups)
+    if group:
+        select_and_connect_to_server(group)
+    else:
+        click.echo("No group selected.")
 
 def select_and_connect_to_server(group):
     """Select a server from the chosen group and initiate SSH connection."""
     servers = get_servers_in_group(configs, group)
-    server = click.prompt(
-        f"Select a server from group '{group}'",
-        type=click.Choice(servers),
-        show_choices=True
-    )
+    server = select_with_prompt(f"Select a server from group '{group}'", servers)
     
+    if not server:
+        click.echo("No server selected.")
+        return
+
     server_config = get_server_config(configs, group, server)
     hostname = server_config['hostname']
     username = server_config['username']
