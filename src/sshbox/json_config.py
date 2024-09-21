@@ -27,13 +27,13 @@ def get_groups(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]]) -> Li
     """Return a list of all groups in the configuration."""
     return list(config.keys())
 
-def get_servers_in_group(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group: str) -> List[str]:
-    """Return a list of servers in the specified group."""
+def get_hosts_in_group(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group: str) -> List[str]:
+    """Return a list of hosts in the specified group."""
     return list(config[group].keys())
 
-def get_server_config(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group: str, server: str) -> Dict[str, Any]:
-    """Return the configuration for a specific server in a group."""
-    return config[group][server]
+def get_host_config(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group: str, host: str) -> Dict[str, Any]:
+    """Return the configuration for a specific host in a group."""
+    return config[group][host]
 
 def add_group(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group: str) -> None:
     """Add a new group to the configuration."""
@@ -41,13 +41,13 @@ def add_group(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group:
         raise ValueError(f"Group '{group}' already exists.")
     config[group] = OrderedDict()
 
-def add_server(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group: str, server: str, server_config: Dict[str, Any]) -> None:
-    """Add a new server to a group in the configuration."""
+def add_host(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group: str, host: str, host_config: Dict[str, Any]) -> None:
+    """Add a new host to a group in the configuration."""
     if group not in config:
         raise ValueError(f"Group '{group}' does not exist.")
-    if server in config[group]:
-        raise ValueError(f"Server '{server}' already exists in group '{group}'.")
-    config[group][server] = server_config
+    if host in config[group]:
+        raise ValueError(f"host '{host}' already exists in group '{group}'.")
+    config[group][host] = host_config
 
 def remove_group(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group: str) -> None:
     """Remove a group from the configuration."""
@@ -55,13 +55,13 @@ def remove_group(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], gro
         raise ValueError(f"Group '{group}' does not exist.")
     del config[group]
 
-def remove_server(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group: str, server: str) -> None:
-    """Remove a server from a group in the configuration."""
+def remove_host(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group: str, host: str) -> None:
+    """Remove a host from a group in the configuration."""
     if group not in config:
         raise ValueError(f"Group '{group}' does not exist.")
-    if server not in config[group]:
-        raise ValueError(f"Server '{server}' does not exist in group '{group}'.")
-    del config[group][server]
+    if host not in config[group]:
+        raise ValueError(f"host '{host}' does not exist in group '{group}'.")
+    del config[group][host]
 
 def edit_group(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], old_group: str, new_group: str) -> None:
     """Edit a group name in the configuration."""
@@ -71,22 +71,22 @@ def edit_group(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], old_g
         raise ValueError(f"Group '{new_group}' already exists.")
     config[new_group] = config.pop(old_group)
 
-def edit_server(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group: str, old_server: str, new_server: str, new_config: Dict[str, Any]) -> None:
-    """Edit a server's name and configuration in a group."""
+def edit_host(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group: str, old_host: str, new_host: str, new_config: Dict[str, Any]) -> None:
+    """Edit a host's name and configuration in a group."""
     if group not in config:
         raise ValueError(f"Group '{group}' does not exist.")
-    if old_server not in config[group]:
-        raise ValueError(f"Server '{old_server}' does not exist in group '{group}'.")
-    if new_server in config[group] and old_server != new_server:
-        raise ValueError(f"Server '{new_server}' already exists in group '{group}'.")
-    del config[group][old_server]
-    config[group][new_server] = new_config
+    if old_host not in config[group]:
+        raise ValueError(f"host '{old_host}' does not exist in group '{group}'.")
+    if new_host in config[group] and old_host != new_host:
+        raise ValueError(f"host '{new_host}' already exists in group '{group}'.")
+    del config[group][old_host]
+    config[group][new_host] = new_config
 
 def create_sample_config() -> OrderedDict[str, OrderedDict[str, Dict[str, Any]]]:
     """Create and return a sample configuration."""
     return OrderedDict([
         ("development", OrderedDict([
-            ("web-server", {
+            ("web-host", {
                 "hostname": "dev.example.com",
                 "username": "devuser",
                 "port": 22
@@ -98,12 +98,12 @@ def create_sample_config() -> OrderedDict[str, OrderedDict[str, Dict[str, Any]]]
             })
         ])),
         ("production", OrderedDict([
-            ("web-server-1", {
+            ("web-host-1", {
                 "hostname": "web1.example.com",
                 "username": "produser",
                 "port": 22
             }),
-            ("web-server-2", {
+            ("web-host-2", {
                 "hostname": "web2.example.com",
                 "username": "produser",
                 "port": 22

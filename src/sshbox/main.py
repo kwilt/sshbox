@@ -54,10 +54,10 @@ def cli(ctx):
 def connect():
     """Connect to a selected host using SSH."""
     groups = get_groups(configs)
-    group = select_option(groups, "Select a group:")
+    group = select_option(groups, "Select Group")
     
     hosts = get_hosts_in_group(configs, group)
-    host = select_option(hosts, f"Select a host from {group}:")
+    host = select_option(hosts, f"Select Host")
     
     host_config = configs[group][host]
     
@@ -67,7 +67,7 @@ def connect():
         f"{host_config['username']}@{host_config['hostname']}"
     ]
     
-    click.echo(f"Connecting to {host} in {group}...")
+    click.echo(f"Connecting to {host}...")
     subprocess.run(ssh_command)
 
 @cli.command()
