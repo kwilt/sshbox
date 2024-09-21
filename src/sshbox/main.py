@@ -2,6 +2,7 @@ import click
 import os
 import sys
 import json
+import subprocess
 from dotenv import load_dotenv
 from .json_config import load_json_config, get_groups, get_servers_in_group, get_server_config, create_sample_config
 
@@ -38,11 +39,37 @@ def cli():
 
 @cli.command()
 def list_groups():
-    """List all available server groups."""
+    """List all available server groups and allow selection."""
     groups = get_groups(configs)
-    click.echo("Available server groups:")
-    for idx, group in enumerate(groups, start=1):
-        click.echo(f"{idx}. {group}")
+    group = click.prompt(
+        "Select a server group",
+        type=click.Choice(groups),
+        show_choices=True
+    )
+    select_and_connect_to_server(group)
+
+def select_and_connect_to_server(group):
+    """Select a server from the chosen group and initiate SSH connection."""
+    servers = get_servers_in_group(configs, group)
+    server = click.prompt(
+        f"Select a server from group '{group}'",
+        type=click.Choice(servers),
+        show_choices=True
+    )
+    
+    server_config = get_server_config(configs, group, server)
+    hostname = server_config['hostname']
+    username = server_config['username']
+    port = server_config.get('port', 22)
+    
+    click.echo(f"Connecting to {username}@{hostname}:{port}...")
+    
+    try:
+        subprocess.run(['ssh', f'{username}@{hostname}', '-p', str(port)], check=True)
+    except subprocess.CalledProcessError:
+        click.echo("Failed to establish SSH connection.", err=True)
+    except FileNotFoundError:
+        click.echo("SSH client not found. Please make sure SSH is installed on your system.", err=True)
 
 @cli.command()
 @click.argument('group')
