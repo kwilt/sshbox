@@ -9,6 +9,7 @@ dependencies = [
     "click>=8.1.7",
     "pyyaml>=6.0.2",
     "python-dotenv>=1.0.1",
+    "prompt-toolkit>=3.0.47",
 ]
 requires-python = ">=3.12"
 readme = "README.md"
@@ -22,5 +23,5 @@ build-backend = "pdm.backend"
 [tool.pdm]
 distribution = true
 
-[tool.pdm.scripts]
-sshbox = { call = "sshbox.main:select_ssh_config" }
+[project.scripts]
+sshbox = "sshbox.main:list_groups"
