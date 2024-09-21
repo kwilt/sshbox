@@ -28,3 +28,37 @@ def get_servers_in_group(config: Dict[str, Dict[str, Dict[str, str]]], group: st
 def get_server_config(config: Dict[str, Dict[str, Dict[str, str]]], group: str, server: str) -> Dict[str, str]:
     """Return the configuration for a specific server in a group."""
     return config[group][server]
+
+def create_sample_config() -> Dict[str, Dict[str, Dict[str, str]]]:
+    """Create and return a sample configuration."""
+    return {
+        "development": {
+            "web-server": {
+                "hostname": "dev.example.com",
+                "username": "devuser",
+                "port": 22
+            },
+            "database": {
+                "hostname": "db.dev.example.com",
+                "username": "dbadmin",
+                "port": 2222
+            }
+        },
+        "production": {
+            "web-server-1": {
+                "hostname": "web1.example.com",
+                "username": "produser",
+                "port": 22
+            },
+            "web-server-2": {
+                "hostname": "web2.example.com",
+                "username": "produser",
+                "port": 22
+            },
+            "database": {
+                "hostname": "db.example.com",
+                "username": "dbadmin",
+                "port": 22
+            }
+        }
+    }

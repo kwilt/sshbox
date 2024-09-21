@@ -3,40 +3,7 @@ import os
 import sys
 import json
 from dotenv import load_dotenv
-from .json_config import load_json_config, get_groups, get_servers_in_group, get_server_config
-
-def create_sample_config():
-    return {
-        "development": {
-            "web-server": {
-                "hostname": "dev.example.com",
-                "username": "devuser",
-                "port": 22
-            },
-            "database": {
-                "hostname": "db.dev.example.com",
-                "username": "dbadmin",
-                "port": 2222
-            }
-        },
-        "production": {
-            "web-server-1": {
-                "hostname": "web1.example.com",
-                "username": "produser",
-                "port": 22
-            },
-            "web-server-2": {
-                "hostname": "web2.example.com",
-                "username": "produser",
-                "port": 22
-            },
-            "database": {
-                "hostname": "db.example.com",
-                "username": "dbadmin",
-                "port": 22
-            }
-        }
-    }
+from .json_config import load_json_config, get_groups, get_servers_in_group, get_server_config, create_sample_config
 
 # Load environment variables from .env file
 load_dotenv()
