@@ -1,63 +1,60 @@
 import click
 import os
 from dotenv import load_dotenv
+from .json_config import load_json_config, get_groups, get_servers_in_group, get_server_config
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Get the SSH config file path from environment variable
-config_file = os.getenv('SSH_CONFIG_FILE_PATH')
+# Get the JSON config file path from environment variable
+config_file = os.getenv('JSON_CONFIG_FILE_PATH')
 
 if not config_file:
-    raise ValueError("The SSH_CONFIG_FILE_PATH environment variable is not set.")
+    raise ValueError("The JSON_CONFIG_FILE_PATH environment variable is not set.")
 
-# Define a function to parse the SSH config file
-def parse_ssh_config(file_path):
-    """Parse the SSH config file and return a dictionary of configurations."""
-    config_dict = {}
-    with open(file_path, 'r') as file:
-        current_host = None
-        for line in file:
-            line = line.strip()
-            if not line or line.startswith('#'):
-                continue
-            if line.startswith('Host '):
-                current_host = line.split(' ')[1]
-                config_dict[current_host] = {}
-            elif current_host and ' ' in line:
-                key, value = line.split(' ', 1)
-                config_dict[current_host][key] = value
-    return config_dict
+# Load the JSON configuration
+configs = load_json_config(config_file)
 
-# Define a Click command to display and select SSH configurations
-@click.command()
-def select_ssh_config():
-    """A CLI to select and display SSH configuration entries."""
-    # Parse the SSH config file
-    configs = parse_ssh_config(config_file)
+@click.group()
+def cli():
+    """CLI for managing SSH connections using JSON configuration."""
+    pass
 
-    if not configs:
-        click.echo("No configurations found.")
+@cli.command()
+def list_groups():
+    """List all available server groups."""
+    groups = get_groups(configs)
+    click.echo("Available server groups:")
+    for idx, group in enumerate(groups, start=1):
+        click.echo(f"{idx}. {group}")
+
+@cli.command()
+@click.argument('group')
+def list_servers(group):
+    """List all servers in a specific group."""
+    if group not in configs:
+        click.echo(f"Group '{group}' not found.")
         return
+    servers = get_servers_in_group(configs, group)
+    click.echo(f"Servers in group '{group}':")
+    for idx, server in enumerate(servers, start=1):
+        click.echo(f"{idx}. {server}")
 
-    # Display the configuration options
-    click.echo("Select a configuration:")
-    for idx, host in enumerate(configs.keys(), start=1):
-        click.echo(f"{idx}. {host}")
-
-    try:
-        choice = int(click.prompt("Enter the number of your choice"))
-        if choice < 1 or choice > len(configs):
-            click.echo("Invalid choice.")
-            return
-    except ValueError:
-        click.echo("Please enter a valid number.")
+@cli.command()
+@click.argument('group')
+@click.argument('server')
+def show_config(group, server):
+    """Show configuration for a specific server in a group."""
+    if group not in configs:
+        click.echo(f"Group '{group}' not found.")
         return
-
-    selected_host = list(configs.keys())[choice - 1]
-    click.echo(f"\nSelected Configuration for {selected_host}:")
-    for key, value in configs[selected_host].items():
+    if server not in configs[group]:
+        click.echo(f"Server '{server}' not found in group '{group}'.")
+        return
+    config = get_server_config(configs, group, server)
+    click.echo(f"Configuration for {server} in group {group}:")
+    for key, value in config.items():
         click.echo(f"{key}: {value}")
 
 if __name__ == '__main__':
-    select_ssh_config()
+    cli()
