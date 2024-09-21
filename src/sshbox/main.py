@@ -80,30 +80,38 @@ def add():
         try:
             add_group(configs, group)
             click.echo(f"Group '{group}' added successfully.")
+            
+            if click.confirm("Would you like to add a host to this new group?"):
+                add_host_to_group(group)
         except ValueError as e:
             click.echo(f"Error: {str(e)}")
     else:
-        groups = get_groups(configs)
-        group = select_option(groups, "Select Group For New Host")
-        
-        host = click.prompt("Enter Alias For Connection")
-        hostname = click.prompt("Enter Hostname")
-        username = click.prompt("Enter Username")
-        port = click.prompt("Enter Port", default=22, type=int)
-        
-        host_config = {
-            "hostname": hostname,
-            "username": username,
-            "port": port
-        }
-        
-        try:
-            add_host(configs, group, host, host_config)
-            click.echo(f"'{host}' added successfully to '{group}'")
-        except ValueError as e:
-            click.echo(f"Error: {str(e)}")
+        add_host_to_group()
     
     save_json_config(configs, config_file)
+
+def add_host_to_group(group=None):
+    """Add a new host to a group."""
+    if group is None:
+        groups = get_groups(configs)
+        group = select_option(groups, "Select Group For New Host")
+    
+    host = click.prompt("Enter Alias For Connection")
+    hostname = click.prompt("Enter Hostname")
+    username = click.prompt("Enter Username")
+    port = click.prompt("Enter Port", default=22, type=int)
+    
+    host_config = {
+        "hostname": hostname,
+        "username": username,
+        "port": port
+    }
+    
+    try:
+        add_host(configs, group, host, host_config)
+        click.echo(f"'{host}' added successfully to '{group}'")
+    except ValueError as e:
+        click.echo(f"Error: {str(e)}")
 
 @cli.command()
 def remove():
