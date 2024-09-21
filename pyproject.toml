@@ -20,7 +20,7 @@ build-backend = "pdm.backend"
 
 
 [tool.pdm]
-distribution = true
+distribution = false
 
 [project.scripts]
 sshbox = "sshbox.main:cli"
