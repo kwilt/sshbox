@@ -3,21 +3,10 @@ import click
 from dotenv import load_dotenv
 
 from .json_config import (
-    load_json_config, save_json_config, get_groups, get_servers_in_group,
-    create_sample_config, add_group, add_server, remove_group, remove_server,
-    edit_group, edit_server
+    load_json_config, save_json_config, get_groups, get_hosts_in_group,
+    create_sample_config, add_group, add_host, remove_group, remove_host,
+    edit_group, edit_host
 )
-
-def select_with_click(options, prompt_text):
-    click.echo(prompt_text)
-    for index, option in enumerate(options, start=1):
-        click.echo(f"{index}. {option}")
-    
-    while True:
-        user_input = click.prompt("Enter the number of your choice", type=int)
-        if 0 < user_input <= len(options):
-            return options[user_input - 1]
-        click.echo("Invalid choice. Please try again.")
 
 def select_option(options, prompt_text):
     click.echo(prompt_text)
@@ -61,11 +50,11 @@ def cli():
 
 @cli.command()
 def add():
-    """Add a new group or server to the configuration."""
-    choice = select_option(['group', 'server'], "Do you want to add a new group or a new server?")
+    """Add a new group or host to the configuration."""
+    choice = select_option(['Host', 'Group'], "Add New Host Or Group?")
     
-    if choice == 'group':
-        group = click.prompt("Enter the name of the new group")
+    if choice == 'Group':
+        group = click.prompt("Enter New Group")
         try:
             add_group(configs, group)
             click.echo(f"Group '{group}' added successfully.")
@@ -73,22 +62,22 @@ def add():
             click.echo(f"Error: {str(e)}")
     else:
         groups = get_groups(configs)
-        group = select_option(groups, "Select a group to add the server to:")
+        group = select_option(groups, "Select Group For New Host:")
         
-        server = click.prompt("Enter the name of the new server")
-        hostname = click.prompt("Enter the hostname")
-        username = click.prompt("Enter the username")
-        port = click.prompt("Enter the port (default: 22)", default=22, type=int)
+        host = click.prompt("Enter Alias For Connection")
+        hostname = click.prompt("Enter Hostname")
+        username = click.prompt("Enter Username")
+        port = click.prompt("Enter Port", default=22, type=int)
         
-        server_config = {
+        host_config = {
             "hostname": hostname,
             "username": username,
             "port": port
         }
         
         try:
-            add_server(configs, group, server, server_config)
-            click.echo(f"Server '{server}' added successfully to group '{group}'.")
+            add_host(configs, group, host, host_config)
+            click.echo(f"'{host}' added successfully to '{group}'")
         except ValueError as e:
             click.echo(f"Error: {str(e)}")
     
@@ -96,12 +85,12 @@ def add():
 
 @cli.command()
 def remove():
-    """Remove a group or server from the configuration."""
-    choice = select_option(['group', 'server'], "Do you want to remove a group or a server?")
+    """Remove a group or host from the configuration."""
+    choice = select_option(['Host', 'Group'], "Remove Host Or Group?")
     
-    if choice == 'group':
+    if choice == 'Group':
         groups = get_groups(configs)
-        group = select_option(groups, "Select a group to remove:")
+        group = select_option(groups, "Select Group For Removal:")
         
         try:
             remove_group(configs, group)
@@ -110,14 +99,14 @@ def remove():
             click.echo(f"Error: {str(e)}")
     else:
         groups = get_groups(configs)
-        group = select_option(groups, "Select a group:")
+        group = select_option(groups, "Select Group:")
         
-        servers = get_servers_in_group(configs, group)
-        server = select_option(servers, f"Select a server to remove:")
+        hosts = get_hosts_in_group(configs, group)
+        host = select_option(hosts, f"Select Host For Removal:")
         
         try:
-            remove_server(configs, group, server)
-            click.echo(f"Server '{server}' removed successfully from group '{group}'.")
+            remove_host(configs, group, host)
+            click.echo(f"'{host}' removed successfully from '{group}'")
         except ValueError as e:
             click.echo(f"Error: {str(e)}")
     
@@ -125,30 +114,30 @@ def remove():
 
 @cli.command()
 def edit():
-    """Edit a group or server in the configuration."""
-    choice = select_option(['group', 'server'], "Do you want to edit a group or a server?")
+    """Edit a group or host in the configuration."""
+    choice = select_option(['Host', 'Group'], "Edit Host Or Group?")
     
-    if choice == 'group':
+    if choice == 'Group':
         groups = get_groups(configs)
-        old_group = select_option(groups, "Select a group to edit:")
+        old_group = select_option(groups, "Select Group To Edit:")
         
-        new_group = click.prompt(f"Enter the new name for group '{old_group}'")
+        new_group = click.prompt(f"Enter New Name For Group: '{old_group}'")
         try:
             edit_group(configs, old_group, new_group)
-            click.echo(f"Group '{old_group}' renamed to '{new_group}' successfully.")
+            click.echo(f"'{old_group}' successfully renamed to '{new_group}'")
         except ValueError as e:
             click.echo(f"Error: {str(e)}")
     else:
         groups = get_groups(configs)
-        group = select_option(groups, "Select a group:")
+        group = select_option(groups, "Select Group To Edit:")
         
-        servers = get_servers_in_group(configs, group)
-        old_server = select_option(servers, f"Select a server to edit:")
+        hosts = get_hosts_in_group(configs, group)
+        old_host = select_option(hosts, f"Select Host To Edit:")
         
-        new_server = click.prompt(f"Enter the new name for server '{old_server}' (press Enter to keep the same name)", default=old_server)
-        hostname = click.prompt("Enter the new hostname", default=configs[group][old_server]['hostname'])
-        username = click.prompt("Enter the new username", default=configs[group][old_server]['username'])
-        port = click.prompt("Enter the new port", default=configs[group][old_server].get('port', 22), type=int)
+        new_host = click.prompt(f"Enter New Name For Host: '{old_host}' (press Enter to keep the same name)", default=old_host)
+        hostname = click.prompt("Enter New Hostname", default=configs[group][old_host]['hostname'])
+        username = click.prompt("Enter New Username", default=configs[group][old_host]['username'])
+        port = click.prompt("Enter New Port", default=configs[group][old_host].get('port', 22), type=int)
         
         new_config = {
             "hostname": hostname,
@@ -157,78 +146,8 @@ def edit():
         }
         
         try:
-            edit_server(configs, group, old_server, new_server, new_config)
-            click.echo(f"Server '{old_server}' in group '{group}' updated successfully.")
-        except ValueError as e:
-            click.echo(f"Error: {str(e)}")
-    
-    save_json_config(configs, config_file)
-
-@cli.command()
-def remove():
-    """Remove a group or server from the configuration."""
-    choice = select_option(['group', 'server'], "Do you want to remove a group or a server?")
-    
-    if choice == 'group':
-        groups = get_groups(configs)
-        group = select_option(groups, "Select a group to remove:")
-        
-        try:
-            remove_group(configs, group)
-            click.echo(f"Group '{group}' removed successfully.")
-        except ValueError as e:
-            click.echo(f"Error: {str(e)}")
-    else:
-        groups = get_groups(configs)
-        group = select_option(groups, "Select a group:")
-        
-        servers = get_servers_in_group(configs, group)
-        server = select_option(servers, f"Select a server to remove:")
-        
-        try:
-            remove_server(configs, group, server)
-            click.echo(f"Server '{server}' removed successfully from group '{group}'.")
-        except ValueError as e:
-            click.echo(f"Error: {str(e)}")
-    
-    save_json_config(configs, config_file)
-
-@cli.command()
-def edit():
-    """Edit a group or server in the configuration."""
-    choice = select_option(['group', 'server'], "Do you want to edit a group or a server?")
-    
-    if choice == 'group':
-        groups = get_groups(configs)
-        old_group = select_option(groups, "Select a group to edit:")
-        
-        new_group = click.prompt(f"Enter the new name for group '{old_group}'")
-        try:
-            edit_group(configs, old_group, new_group)
-            click.echo(f"Group '{old_group}' renamed to '{new_group}' successfully.")
-        except ValueError as e:
-            click.echo(f"Error: {str(e)}")
-    else:
-        groups = get_groups(configs)
-        group = select_option(groups, "Select a group:")
-        
-        servers = get_servers_in_group(configs, group)
-        old_server = select_option(servers, f"Select a server to edit:")
-        
-        new_server = click.prompt(f"Enter the new name for server '{old_server}' (press Enter to keep the same name)", default=old_server)
-        hostname = click.prompt("Enter the new hostname", default=configs[group][old_server]['hostname'])
-        username = click.prompt("Enter the new username", default=configs[group][old_server]['username'])
-        port = click.prompt("Enter the new port", default=configs[group][old_server].get('port', 22), type=int)
-        
-        new_config = {
-            "hostname": hostname,
-            "username": username,
-            "port": port
-        }
-        
-        try:
-            edit_server(configs, group, old_server, new_server, new_config)
-            click.echo(f"Server '{old_server}' in group '{group}' updated successfully.")
+            edit_host(configs, group, old_host, new_host, new_config)
+            click.echo(f"'{old_host}' in '{group}' successfully updated")
         except ValueError as e:
             click.echo(f"Error: {str(e)}")
     
