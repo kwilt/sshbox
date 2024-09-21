@@ -79,9 +79,9 @@ def add():
         group = click.prompt("Enter New Group")
         try:
             add_group(configs, group)
-            click.echo(f"Group '{group}' added successfully.")
+            click.echo(f"'{group}' added successfully.")
             
-            if click.confirm("Would you like to add a host to this new group?"):
+            if click.confirm(f"Add Host To {group}?"):
                 add_host_to_group(group)
         except ValueError as e:
             click.echo(f"Error: {str(e)}")
