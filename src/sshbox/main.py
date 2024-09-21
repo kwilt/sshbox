@@ -1,5 +1,6 @@
 import os
 import click
+import subprocess
 from dotenv import load_dotenv
 
 from .json_config import (
@@ -43,10 +44,31 @@ except ValueError as e:
         click.echo(f"Error loading configuration: {str(e)}", err=True)
         exit(1)
 
-@click.group()
-def cli():
+@click.group(invoke_without_command=True)
+@click.pass_context
+def cli(ctx):
     """CLI for managing SSH connections using JSON configuration."""
-    pass
+    if ctx.invoked_subcommand is None:
+        connect()
+
+def connect():
+    """Connect to a selected host using SSH."""
+    groups = get_groups(configs)
+    group = select_option(groups, "Select a group:")
+    
+    hosts = get_hosts_in_group(configs, group)
+    host = select_option(hosts, f"Select a host from {group}:")
+    
+    host_config = configs[group][host]
+    
+    ssh_command = [
+        "ssh",
+        "-p", str(host_config['port']),
+        f"{host_config['username']}@{host_config['hostname']}"
+    ]
+    
+    click.echo(f"Connecting to {host} in {group}...")
+    subprocess.run(ssh_command)
 
 @cli.command()
 def add():
