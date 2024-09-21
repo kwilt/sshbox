@@ -85,7 +85,7 @@ def edit_host(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group:
 def create_sample_config() -> OrderedDict[str, OrderedDict[str, Dict[str, Any]]]:
     """Create and return a sample configuration."""
     return OrderedDict([
-        ("development", OrderedDict([
+        ("Development", OrderedDict([
             ("web-host", {
                 "hostname": "dev.example.com",
                 "username": "devuser",
@@ -97,7 +97,7 @@ def create_sample_config() -> OrderedDict[str, OrderedDict[str, Dict[str, Any]]]
                 "port": 2222
             })
         ])),
-        ("production", OrderedDict([
+        ("Production", OrderedDict([
             ("web-host-1", {
                 "hostname": "web1.example.com",
                 "username": "produser",
