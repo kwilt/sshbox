@@ -14,7 +14,7 @@ def load_json_config(file_path: str) -> OrderedDict[str, OrderedDict[str, Dict[s
             raise ValueError(f"Configuration file is empty: {file_path}")
         
         try:
-            return json.loads(content, object_pairs_hook=OrderedDict)
+            return OrderedDict(json.loads(content, object_pairs_hook=OrderedDict))
         except json.JSONDecodeError as e:
             raise ValueError(f"Invalid JSON in configuration file: {file_path}\n{str(e)}")
 
