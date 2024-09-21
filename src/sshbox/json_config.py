@@ -84,34 +84,34 @@ def edit_server(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], grou
 
 def create_sample_config() -> OrderedDict[str, OrderedDict[str, Dict[str, Any]]]:
     """Create and return a sample configuration."""
-    return {
-        "development": {
-            "web-server": {
+    return OrderedDict([
+        ("development", OrderedDict([
+            ("web-server", {
                 "hostname": "dev.example.com",
                 "username": "devuser",
                 "port": 22
-            },
-            "database": {
+            }),
+            ("database", {
                 "hostname": "db.dev.example.com",
                 "username": "dbadmin",
                 "port": 2222
-            }
-        },
-        "production": {
-            "web-server-1": {
+            })
+        ])),
+        ("production", OrderedDict([
+            ("web-server-1", {
                 "hostname": "web1.example.com",
                 "username": "produser",
                 "port": 22
-            },
-            "web-server-2": {
+            }),
+            ("web-server-2", {
                 "hostname": "web2.example.com",
                 "username": "produser",
                 "port": 22
-            },
-            "database": {
+            }),
+            ("database", {
                 "hostname": "db.example.com",
                 "username": "dbadmin",
                 "port": 22
-            }
-        }
-    }
+            })
+        ]))
+    ])
