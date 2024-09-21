@@ -1,8 +1,42 @@
 import click
 import os
 import sys
+import json
 from dotenv import load_dotenv
 from .json_config import load_json_config, get_groups, get_servers_in_group, get_server_config
+
+def create_sample_config():
+    return {
+        "development": {
+            "web-server": {
+                "hostname": "dev.example.com",
+                "username": "devuser",
+                "port": 22
+            },
+            "database": {
+                "hostname": "db.dev.example.com",
+                "username": "dbadmin",
+                "port": 2222
+            }
+        },
+        "production": {
+            "web-server-1": {
+                "hostname": "web1.example.com",
+                "username": "produser",
+                "port": 22
+            },
+            "web-server-2": {
+                "hostname": "web2.example.com",
+                "username": "produser",
+                "port": 22
+            },
+            "database": {
+                "hostname": "db.example.com",
+                "username": "dbadmin",
+                "port": 22
+            }
+        }
+    }
 
 # Load environment variables from .env file
 load_dotenv()
@@ -13,9 +47,22 @@ config_file = os.getenv('JSON_CONFIG_FILE_PATH', os.path.expanduser('~/.sshbox_c
 try:
     # Load the JSON configuration
     configs = load_json_config(config_file)
-except (FileNotFoundError, ValueError) as e:
-    click.echo(f"Error loading configuration: {str(e)}", err=True)
-    sys.exit(1)
+except FileNotFoundError:
+    # If the file doesn't exist, create it with sample configuration
+    configs = create_sample_config()
+    with open(config_file, 'w') as f:
+        json.dump(configs, f, indent=2)
+    click.echo(f"Created sample configuration file: {config_file}")
+except ValueError as e:
+    if "Configuration file is empty" in str(e):
+        # If the file is empty, create sample configuration
+        configs = create_sample_config()
+        with open(config_file, 'w') as f:
+            json.dump(configs, f, indent=2)
+        click.echo(f"Created sample configuration in empty file: {config_file}")
+    else:
+        click.echo(f"Error loading configuration: {str(e)}", err=True)
+        sys.exit(1)
 
 @click.group()
 def cli():
