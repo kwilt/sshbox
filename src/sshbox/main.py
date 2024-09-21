@@ -13,14 +13,14 @@ def select_with_click(options, prompt_text):
     
     def get_character():
         import sys, tty, termios
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
+        file_descriptor = sys.stdin.fileno()
+        old_terminal_settings = termios.tcgetattr(file_descriptor)
         try:
             tty.setraw(sys.stdin.fileno())
-            ch = sys.stdin.read(1)
+            character = sys.stdin.read(1)
         finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
+            termios.tcsetattr(file_descriptor, termios.TCSADRAIN, old_terminal_settings)
+        return character
 
     while True:
         char = get_character()
