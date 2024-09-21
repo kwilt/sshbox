@@ -1,19 +1,21 @@
 import click
 import os
+import sys
 from dotenv import load_dotenv
 from .json_config import load_json_config, get_groups, get_servers_in_group, get_server_config
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Get the JSON config file path from environment variable
-config_file = os.getenv('JSON_CONFIG_FILE_PATH')
+# Get the JSON config file path from environment variable or use a default
+config_file = os.getenv('JSON_CONFIG_FILE_PATH', os.path.expanduser('~/.sshbox_config.json'))
 
-if not config_file:
-    raise ValueError("The JSON_CONFIG_FILE_PATH environment variable is not set.")
-
-# Load the JSON configuration
-configs = load_json_config(config_file)
+try:
+    # Load the JSON configuration
+    configs = load_json_config(config_file)
+except (FileNotFoundError, ValueError) as e:
+    click.echo(f"Error loading configuration: {str(e)}", err=True)
+    sys.exit(1)
 
 @click.group()
 def cli():
