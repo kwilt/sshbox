@@ -252,4 +252,4 @@ def edit():
     save_json_config(configs, config_file)
 
 if __name__ == '__main__':
-    cli()
+    cli(prog_name="sshbox")
