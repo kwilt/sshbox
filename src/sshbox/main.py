@@ -15,7 +15,7 @@ def select_option(options, prompt_text):
         click.echo(f"{index}. {option}")
     
     while True:
-        user_input = click.prompt("Enter the number of your choice", type=int)
+        user_input = click.prompt("Enter Selection", type=int)
         if 0 < user_input <= len(options):
             return options[user_input - 1]
         click.echo("Invalid choice. Please try again.")
