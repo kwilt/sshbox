@@ -1,14 +1,16 @@
 [project]
 name = "sshbox"
-version = "0.2.0"
-description = "Manage SSH Connections"
+version = "0.2.1"
+description = "CLI for managing SSH connections using JSON configuration"
 authors = [
     {name = "kwilt", email = "kwilt@pm.me"},
 ]
+
 dependencies = [
     "click>=8.1.7",
     "python-dotenv>=1.0.1",
 ]
+
 requires-python = ">=3.12"
 readme = "README.md"
 license = {text = "MIT"}
@@ -17,13 +19,8 @@ license = {text = "MIT"}
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
-
 [project.scripts]
 sshbox = "sshbox.main:cli"
-[tool.pytest.ini_options]
-pythonpath = [
-  "src"
-]
 
 [tool.pdm]
 distribution = false
