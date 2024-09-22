@@ -1,6 +1,6 @@
 import pytest
 from collections import OrderedDict
-from ..src.sshbox.json_config import (
+from sshbox.json_config import (
     load_json_config,
     save_json_config,
     get_groups,
