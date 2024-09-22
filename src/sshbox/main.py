@@ -110,14 +110,14 @@ def add_host_to_group(group=None):
         
         try:
             add_host(configs, group, host, host_config)
+            save_json_config(configs, config_file)
             click.echo(f"'{host}' added successfully to '{group}'")
-            
-            if not click.confirm(f"Add Another Host To {group}?"):
-                break
         except ValueError as e:
             click.echo(f"Error: {str(e)}")
-            if not click.confirm("Try Adding Host Again?"):
-                break
+            continue
+        
+        if not click.confirm(f"Add Another Host To {group}?"):
+            break
 
 @cli.command()
 def remove():
