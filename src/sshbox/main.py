@@ -122,72 +122,80 @@ def add_host_to_group(group=None):
 @cli.command()
 def remove():
     """Remove a group or host from the configuration."""
-    choice = select_option(['Host', 'Group'], "Remove Host Or Group?")
-    
-    if choice == 'Group':
-        groups = get_groups(configs)
-        group = select_option(groups, "Select Group For Removal")
+    while True:
+        choice = select_option(['Host', 'Group'], "Remove Host Or Group?")
         
-        try:
-            remove_group(configs, group)
-            click.echo(f"Group '{group}' removed successfully")
-        except ValueError as e:
-            click.echo(f"Error: {str(e)}")
-    else:
-        groups = get_groups(configs)
-        group = select_option(groups, "Select Group")
+        if choice == 'Group':
+            groups = get_groups(configs)
+            group = select_option(groups, "Select Group For Removal")
+            
+            try:
+                remove_group(configs, group)
+                click.echo(f"Group '{group}' removed successfully")
+            except ValueError as e:
+                click.echo(f"Error: {str(e)}")
+        else:
+            groups = get_groups(configs)
+            group = select_option(groups, "Select Group")
+            
+            hosts = get_hosts_in_group(configs, group)
+            host = select_option(hosts, f"Select Host For Removal")
+            
+            try:
+                remove_host(configs, group, host)
+                click.echo(f"'{host}' removed successfully from '{group}'")
+            except ValueError as e:
+                click.echo(f"Error: {str(e)}")
         
-        hosts = get_hosts_in_group(configs, group)
-        host = select_option(hosts, f"Select Host For Removal")
+        save_json_config(configs, config_file)
         
-        try:
-            remove_host(configs, group, host)
-            click.echo(f"'{host}' removed successfully from '{group}'")
-        except ValueError as e:
-            click.echo(f"Error: {str(e)}")
-    
-    save_json_config(configs, config_file)
+        if not click.confirm(f"Remove Another {choice}?"):
+            break
 
 @cli.command()
 def edit():
     """Edit a group or host in the configuration."""
-    choice = select_option(['Host', 'Group'], "Edit Host Or Group?")
-    
-    if choice == 'Group':
-        groups = get_groups(configs)
-        old_group = select_option(groups, "Select Group To Edit")
+    while True:
+        choice = select_option(['Host', 'Group'], "Edit Host Or Group?")
         
-        new_group = click.prompt(f"Enter New Name For Group: '{old_group}'")
-        try:
-            edit_group(configs, old_group, new_group)
-            click.echo(f"'{old_group}' successfully renamed to '{new_group}'")
-        except ValueError as e:
-            click.echo(f"Error: {str(e)}")
-    else:
-        groups = get_groups(configs)
-        group = select_option(groups, "Select Group To Edit")
+        if choice == 'Group':
+            groups = get_groups(configs)
+            old_group = select_option(groups, "Select Group To Edit")
+            
+            new_group = click.prompt(f"Enter New Name For Group: '{old_group}'")
+            try:
+                edit_group(configs, old_group, new_group)
+                click.echo(f"'{old_group}' successfully renamed to '{new_group}'")
+            except ValueError as e:
+                click.echo(f"Error: {str(e)}")
+        else:
+            groups = get_groups(configs)
+            group = select_option(groups, "Select Group To Edit")
+            
+            hosts = get_hosts_in_group(configs, group)
+            old_host = select_option(hosts, f"Select Host To Edit")
+            
+            new_host = click.prompt(f"Enter New Name For Host: '{old_host}' (press Enter to keep the same name)", default=old_host)
+            hostname = click.prompt("Enter New Hostname", default=configs[group][old_host]['hostname'])
+            username = click.prompt("Enter New Username", default=configs[group][old_host]['username'])
+            port = click.prompt("Enter New Port", default=configs[group][old_host].get('port', 22), type=int)
+            
+            new_config = {
+                "hostname": hostname,
+                "username": username,
+                "port": port
+            }
+            
+            try:
+                edit_host(configs, group, old_host, new_host, new_config)
+                click.echo(f"'{old_host}' in '{group}' successfully updated")
+            except ValueError as e:
+                click.echo(f"Error: {str(e)}")
         
-        hosts = get_hosts_in_group(configs, group)
-        old_host = select_option(hosts, f"Select Host To Edit")
+        save_json_config(configs, config_file)
         
-        new_host = click.prompt(f"Enter New Name For Host: '{old_host}' (press Enter to keep the same name)", default=old_host)
-        hostname = click.prompt("Enter New Hostname", default=configs[group][old_host]['hostname'])
-        username = click.prompt("Enter New Username", default=configs[group][old_host]['username'])
-        port = click.prompt("Enter New Port", default=configs[group][old_host].get('port', 22), type=int)
-        
-        new_config = {
-            "hostname": hostname,
-            "username": username,
-            "port": port
-        }
-        
-        try:
-            edit_host(configs, group, old_host, new_host, new_config)
-            click.echo(f"'{old_host}' in '{group}' successfully updated")
-        except ValueError as e:
-            click.echo(f"Error: {str(e)}")
-    
-    save_json_config(configs, config_file)
+        if not click.confirm(f"Edit Another {choice}?"):
+            break
 
 if __name__ == '__main__':
     cli()
