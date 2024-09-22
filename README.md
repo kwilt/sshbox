@@ -1,8 +1,10 @@
 # sshbox
 
 ## Install:
-Ensure you have python >=3.10.12 and pipx installed, then:
+`pipx install git+https://github.com/kwilt/sshbox.git`
 
-1. `pipx install pdm`
-2. `pdm install`
-3. `pipx install . -e`
+## How To Use
+- `sshbox` - connect to a host
+- `sshbox add` - Add a new group or host to the configuration
+- `sshbox edit` - Edit a group or host in the configuration
+- `sshbox remove` - Remove a group or host from the configuration
