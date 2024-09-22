@@ -18,16 +18,13 @@ requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
 
-[tool.pdm]
-distribution = false
-
-[tool.pdm.dev-dependencies]
-dev = [
-    "pytest>=8.3.3",
-]
 [project.scripts]
 sshbox = "sshbox.main:cli"
 [tool.pytest.ini_options]
 pythonpath = [
   "src"
 ]
+
+[tool.pdm]
+distribution = false
+
