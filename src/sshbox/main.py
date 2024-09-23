@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from rich.console import Console
 from rich.table import Table
 from rich.align import Align
+from rich import box
 
 from .json_config import (
     load_json_config, save_json_config, get_groups, get_hosts_in_group,
