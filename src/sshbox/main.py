@@ -5,7 +5,6 @@ import os
 from dotenv import load_dotenv
 from rich.console import Console
 from rich.table import Table
-from rich.align import Align
 from rich import box
 
 from .json_config import (
