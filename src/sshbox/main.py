@@ -60,7 +60,7 @@ def connect():
     group = select_option(groups, "Select Group")
 
     hosts = get_hosts_in_group(configs, group)
-    host = select_option(hosts, f"Select Host")
+    host = select_option(hosts, "Select Host")
 
     host_config = configs[group][host]
 
