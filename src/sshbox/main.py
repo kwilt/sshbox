@@ -2,6 +2,8 @@ import os
 import click
 import subprocess
 from dotenv import load_dotenv
+from rich.console import Console
+from rich.table import Table
 
 from .json_config import (
     load_json_config, save_json_config, get_groups, get_hosts_in_group,
@@ -9,19 +11,27 @@ from .json_config import (
     edit_group, edit_host
 )
 
+console = Console()
+
 def select_option(options, prompt_text):
-    click.echo(prompt_text)
+    table = Table(title=prompt_text)
+    table.add_column("Option", style="cyan", no_wrap=True)
+    table.add_column("Value", style="magenta")
+
     for index, option in enumerate(options, start=1):
-        click.echo(f"{index}. {option}")
+        table.add_row(str(index), option)
+
+    console.print(table)
+    console.print("Press the number key to select an option")
 
     while True:
         char = click.getchar()
         if char.isdigit():
             user_input = int(char)
             if 0 < user_input <= len(options):
-                click.echo()  # Move to a new line after selection
+                console.print()  # Move to a new line after selection
                 return options[user_input - 1]
-        click.echo("\nInvalid choice. Please try again.")
+        console.print("\nInvalid choice. Please try again.")
 
 # Load environment variables from .env file
 load_dotenv()
