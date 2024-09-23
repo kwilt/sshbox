@@ -22,15 +22,15 @@ def select_option(options, prompt_text):
         title_style="bold",
         box=box.ROUNDED,
         show_header=False,
-        show_edge=False,
+        show_edge=True,
     )
 
     # Add two columns: one for the index, one for the option
-    table.add_column("Index", style="cyan", justify="right", width=4)
+    table.add_column("Index", style="cyan", justify="right")
     table.add_column("Option", style="magenta", justify="left")
 
     for index, option in enumerate(options, start=1):
-        table.add_row(f"{index}.", option)
+        table.add_row(f"{index}", option)
 
     console.print(table)
 
