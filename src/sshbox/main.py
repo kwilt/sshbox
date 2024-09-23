@@ -1,6 +1,7 @@
 import os
 import click
 import subprocess
+import os
 from dotenv import load_dotenv
 from rich.console import Console
 from rich.table import Table
@@ -14,7 +15,13 @@ from .json_config import (
 console = Console()
 
 def select_option(options, prompt_text):
-    table = Table(title=prompt_text)
+    # Get the terminal width
+    terminal_width = os.get_terminal_size().columns
+    
+    # Set the table width to 60% of the terminal width
+    table_width = int(terminal_width * 0.6)
+    
+    table = Table(title=prompt_text, width=table_width, expand=True)
     table.add_column("Option", style="cyan", no_wrap=True)
     
     # Determine if we're selecting a Host or a Group
