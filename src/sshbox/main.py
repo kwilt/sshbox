@@ -34,17 +34,12 @@ def select_option(options, prompt_text):
         show_edge=True,
     )
 
-    # Determine if we're selecting a Host or a Group
-    value_column_name = "Group" if "Select Group" in prompt_text else "Host"
-    table.add_column(
-        value_column_name,
-        style="magenta",
-        justify="center",
-        width=table_width - 4
-    )
+    # Add two columns: one for the index, one for the option
+    table.add_column("Index", style="cyan", justify="right", width=4)
+    table.add_column("Option", style="magenta", justify="left")
 
     for index, option in enumerate(options, start=1):
-        table.add_row(f"[cyan]{index}.[/cyan] {option}")
+        table.add_row(f"{index}.", option)
 
     # Wrap the table in an Align object to center it
     centered_table = Align.center(table)
