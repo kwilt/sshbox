@@ -17,7 +17,7 @@ console = Console()
 
 from rich.text import Text
 
-def select_option(options, prompt_text):
+def select_option(options, prompt_text, is_group=False):
     app_settings = get_app_settings(configs)
     table_colors = app_settings.get("table_colors", {})
     
@@ -33,7 +33,8 @@ def select_option(options, prompt_text):
 
     # Add two columns: one for the index, one for the option
     table.add_column("Index", style=table_colors.get("selection_number", "cyan"), justify="right")
-    table.add_column("Option", style=table_colors.get("hostname", "yellow"), justify="left")
+    option_style = table_colors.get("group", "green") if is_group else table_colors.get("hostname", "yellow")
+    table.add_column("Option", style=option_style, justify="left")
 
     for index, option in enumerate(options, start=1):
         table.add_row(f"{index}", option)
@@ -83,10 +84,10 @@ def cli(ctx):
 def connect():
     """Connect to a selected host using SSH."""
     groups = get_groups(configs)
-    group = select_option(groups, "Select Group")
+    group = select_option(groups, "Select Group", is_group=True)
 
     hosts = get_hosts_in_group(configs, group)
-    host = select_option(hosts, "Select Host")
+    host = select_option(hosts, "Select Host", is_group=False)
 
     host_config = configs[group][host]
 
@@ -102,7 +103,7 @@ def connect():
 @cli.command()
 def add():
     """Add a new group or host to the configuration."""
-    choice = select_option(['Host', 'Group'], "Add New Host Or Group?")
+    choice = select_option(['Host', 'Group'], "Add New Host Or Group?", is_group=True)
 
     if choice == 'Group':
         group = click.prompt("Enter New Group")
@@ -152,11 +153,11 @@ def add_host_to_group(group=None):
 def remove():
     """Remove a group or host from the configuration."""
     while True:
-        choice = select_option(['Host', 'Group'], "Remove Host Or Group?")
+        choice = select_option(['Host', 'Group'], "Remove Host Or Group?", is_group=True)
 
         if choice == 'Group':
             groups = get_groups(configs)
-            group = select_option(groups, "Select Group For Removal")
+            group = select_option(groups, "Select Group For Removal", is_group=True)
 
             try:
                 remove_group(configs, group)
@@ -185,11 +186,11 @@ def remove():
 def edit():
     """Edit a group or host in the configuration."""
     while True:
-        choice = select_option(['Host', 'Group'], "Edit Host Or Group?")
+        choice = select_option(['Host', 'Group'], "Edit Host Or Group?", is_group=True)
 
         if choice == 'Group':
             groups = get_groups(configs)
-            old_group = select_option(groups, "Select Group To Edit")
+            old_group = select_option(groups, "Select Group To Edit", is_group=True)
 
             new_group = click.prompt(f"Enter New Name For Group: '{old_group}'")
             try:
