@@ -30,7 +30,16 @@ def get_groups(config: OrderedDict[str, Union[Dict[str, Any], OrderedDict[str, D
 
 def get_app_settings(config: OrderedDict[str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]]) -> Dict[str, Any]:
     """Return the app settings from the configuration."""
-    return config.get("app_settings", {})
+    default_settings = {
+        "table_colors": {
+            "selection_number": "cyan",
+            "hostname": "yellow",
+            "group": "green"
+        }
+    }
+    app_settings = config.get("app_settings", {})
+    default_settings.update(app_settings)
+    return default_settings
 
 def set_app_settings(config: OrderedDict[str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]], settings: Dict[str, Any]) -> None:
     """Set the app settings in the configuration."""

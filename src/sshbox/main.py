@@ -10,7 +10,7 @@ from rich import box
 from .json_config import (
     load_json_config, save_json_config, get_groups, get_hosts_in_group,
     create_sample_config, add_group, add_host, remove_group, remove_host,
-    edit_group, edit_host
+    edit_group, edit_host, get_app_settings
 )
 
 console = Console()
@@ -18,6 +18,9 @@ console = Console()
 from rich.text import Text
 
 def select_option(options, prompt_text):
+    app_settings = get_app_settings(configs)
+    table_colors = app_settings.get("table_colors", {})
+    
     # Create a Text object with no_wrap=True
     title = Text(prompt_text, style="bold", no_wrap=True)
     console.print(title)
@@ -29,8 +32,8 @@ def select_option(options, prompt_text):
     )
 
     # Add two columns: one for the index, one for the option
-    table.add_column("Index", style="cyan", justify="right")
-    table.add_column("Option", style="magenta", justify="left")
+    table.add_column("Index", style=table_colors.get("selection_number", "cyan"), justify="right")
+    table.add_column("Option", style=table_colors.get("hostname", "yellow"), justify="left")
 
     for index, option in enumerate(options, start=1):
         table.add_row(f"{index}", option)
