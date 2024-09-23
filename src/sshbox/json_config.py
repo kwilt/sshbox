@@ -20,6 +20,7 @@ def load_json_config(file_path: str) -> OrderedDict[str, OrderedDict[str, Dict[s
 
 def save_json_config(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], file_path: str) -> None:
     """Save the configuration to the JSON file."""
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
     with open(file_path, 'w') as file:
         json.dump(config, file, indent=2)
 
