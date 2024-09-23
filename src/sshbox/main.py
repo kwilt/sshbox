@@ -22,12 +22,12 @@ def select_option(options, prompt_text):
     # Set the table width to 60% of the terminal width
     table_width = int(terminal_width * 0.6)
     
-    table = Table(title=prompt_text, width=table_width, expand=False)
-    table.add_column("Option", style="cyan", no_wrap=True)
+    table = Table(title=prompt_text, title_style="bold", title_justify="center", width=table_width, expand=False)
+    table.add_column("Option", style="cyan", no_wrap=True, justify="center", width=8)
     
     # Determine if we're selecting a Host or a Group
     value_column_name = "Group" if "Select Group" in prompt_text else "Host"
-    table.add_column(value_column_name, style="magenta")
+    table.add_column(value_column_name, style="magenta", justify="left")
 
     for index, option in enumerate(options, start=1):
         table.add_row(str(index), option)
