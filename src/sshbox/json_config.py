@@ -25,8 +25,8 @@ def save_json_config(config: OrderedDict[str, Union[Dict[str, Any], OrderedDict[
         json.dump(config, file, indent=2)
 
 def get_groups(config: OrderedDict[str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]]) -> List[str]:
-    """Return a list of all groups in the configuration."""
-    return [key for key, value in config.items() if isinstance(value, OrderedDict)]
+    """Return a list of all groups in the configuration, excluding app_settings."""
+    return [key for key, value in config.items() if isinstance(value, OrderedDict) and key != "app_settings"]
 
 def get_app_settings(config: OrderedDict[str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]]) -> Dict[str, Any]:
     """Return the app settings from the configuration."""
