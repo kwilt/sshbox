@@ -20,7 +20,7 @@ from rich.text import Text
 def select_option(options, prompt_text, is_group=False):
     app_settings = get_app_settings(configs)
     table_colors = app_settings.get("table_colors", {})
-    
+
     # Create a Text object with no_wrap=True
     title = Text(prompt_text, style="bold", no_wrap=True)
     console.print(title)
@@ -40,7 +40,7 @@ def select_option(options, prompt_text, is_group=False):
             option_style = table_colors.get("hostname" if option == 'Host' else "group", "yellow")
             option_text = Text(option, style=option_style)
         else:
-            option_style = table_colors.get("group" if is_group else "hostname", "yellow")
+            option_style = table_colors.get("group" if is_group else "hostname", "green")
             option_text = Text(option, style=option_style)
         table.add_row(f"{index}", option_text)
 
