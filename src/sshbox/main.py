@@ -23,7 +23,7 @@ def select_option(options, prompt_text):
     table_width = int(terminal_width * 0.6)
     
     table = Table(title=prompt_text, title_style="bold", title_justify="center", width=table_width, expand=False)
-    table.add_column("Option", style="cyan", no_wrap=True, justify="center", width=8)
+    table.add_column("Option", style="cyan", no_wrap=True, justify="center", width=4)
     
     # Determine if we're selecting a Host or a Group
     value_column_name = "Group" if "Select Group" in prompt_text else "Host"
