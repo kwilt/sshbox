@@ -1,5 +1,7 @@
 # sshbox
 
+![sshbox screenshot](image.png)
+
 ## Install:
 `pipx install git+https://github.com/kwilt/sshbox.git`
 
@@ -22,4 +24,47 @@
   - You can change the colors of text in the table by setting values in `table_colors`.
     - Valid color names are here: https://rich.readthedocs.io/en/stable/appendix/colors.html
 
-![sshbox screenshot](image.png)
+
+## Template Config File For Reference
+This will be generated when you run the app for the first time without an existing config file
+
+```sshbox.json
+{
+  "app_settings": {
+    "table_colors": {
+      "selection_number": "cyan",
+      "hostname": "yellow",
+      "group": "green"
+    }
+  },
+  "Development": {
+    "web-host": {
+      "hostname": "dev.example.com",
+      "username": "devuser",
+      "port": 22
+    },
+    "database": {
+      "hostname": "db.dev.example.com",
+      "username": "dbadmin",
+      "port": 2222
+    }
+  },
+  "Production": {
+    "web-host-1": {
+      "hostname": "web1.example.com",
+      "username": "produser",
+      "port": 22
+    },
+    "web-host-2": {
+      "hostname": "web2.example.com",
+      "username": "produser",
+      "port": 22
+    },
+    "database": {
+      "hostname": "db.example.com",
+      "username": "dbadmin",
+      "port": 22
+    }
+  }
+}
+```
