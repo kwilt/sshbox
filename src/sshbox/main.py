@@ -16,7 +16,10 @@ console = Console()
 def select_option(options, prompt_text):
     table = Table(title=prompt_text)
     table.add_column("Option", style="cyan", no_wrap=True)
-    table.add_column("Value", style="magenta")
+    
+    # Determine if we're selecting a Host or a Group
+    value_column_name = "Group" if "Select Group" in prompt_text else "Host"
+    table.add_column(value_column_name, style="magenta")
 
     for index, option in enumerate(options, start=1):
         table.add_row(str(index), option)
