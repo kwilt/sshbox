@@ -22,7 +22,6 @@ def select_option(options, prompt_text):
         table.add_row(str(index), option)
 
     console.print(table)
-    console.print("Press the number key to select an option")
 
     while True:
         char = click.getchar()
