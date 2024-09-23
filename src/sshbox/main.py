@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 from rich.console import Console
 from rich.table import Table
+from rich.align import Align
 
 from .json_config import (
     load_json_config, save_json_config, get_groups, get_hosts_in_group,
@@ -21,7 +22,7 @@ def select_option(options, prompt_text):
     # Set the table width to 60% of the terminal width
     table_width = int(terminal_width * 0.6)
     
-    table = Table(title=prompt_text, width=table_width, expand=True)
+    table = Table(title=prompt_text, width=table_width, expand=False)
     table.add_column("Option", style="cyan", no_wrap=True)
     
     # Determine if we're selecting a Host or a Group
@@ -31,7 +32,9 @@ def select_option(options, prompt_text):
     for index, option in enumerate(options, start=1):
         table.add_row(str(index), option)
 
-    console.print(table)
+    # Wrap the table in an Align object to center it
+    centered_table = Align.center(table)
+    console.print(centered_table)
 
     while True:
         char = click.getchar()
