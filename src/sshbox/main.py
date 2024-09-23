@@ -17,18 +17,9 @@ from .json_config import (
 console = Console()
 
 def select_option(options, prompt_text):
-    # Get the terminal width
-    terminal_width = os.get_terminal_size().columns
-
-    # Set the table width to 60% of the terminal width
-    table_width = int(terminal_width * 0.6)
-
     table = Table(
         title=prompt_text,
         title_style="bold",
-        title_justify="center",
-        width=table_width,
-        expand=True,
         box=box.ROUNDED,
         show_header=False,
         show_edge=False,
@@ -41,9 +32,7 @@ def select_option(options, prompt_text):
     for index, option in enumerate(options, start=1):
         table.add_row(f"{index}.", option)
 
-    # Wrap the table in an Align object to center it
-    centered_table = Align.center(table)
-    console.print(centered_table)
+    console.print(table)
 
     while True:
         char = click.getchar()
