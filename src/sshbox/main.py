@@ -2,7 +2,6 @@ import os
 import click
 import subprocess
 import os
-from dotenv import load_dotenv
 from rich.console import Console
 from rich.table import Table
 from rich import box
@@ -54,9 +53,6 @@ def select_option(options, prompt_text, is_group=False):
                 console.print()  # Move to a new line after selection
                 return options[user_input - 1]
         console.print("\nInvalid choice. Please try again.")
-
-# Load environment variables from .env file
-load_dotenv()
 
 # Get the JSON config file path from environment variable or use a default
 config_file = os.getenv('SSHBOX_CONFIG_FILE', os.path.expanduser('~/.ssh/sshbox.json'))
