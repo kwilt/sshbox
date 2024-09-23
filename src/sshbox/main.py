@@ -50,7 +50,7 @@ def select_option(options, prompt_text):
 load_dotenv()
 
 # Get the JSON config file path from environment variable or use a default
-config_file = os.getenv('JSON_CONFIG_FILE_PATH', os.path.expanduser('~/.ssh/sshbox.json'))
+config_file = os.getenv('SSHBOX_CONFIG_FILE', os.path.expanduser('~/.ssh/sshbox.json'))
 
 try:
     # Load the JSON configuration
