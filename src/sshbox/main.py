@@ -31,7 +31,7 @@ def select_option(options, prompt_text):
         expand=True,
         box=box.ROUNDED,
         show_header=False,
-        show_edge=True,
+        show_edge=False,
     )
 
     # Add two columns: one for the index, one for the option
