@@ -14,11 +14,15 @@ def select_option(options, prompt_text):
     for index, option in enumerate(options, start=1):
         click.echo(f"{index}. {option}")
     
+    click.echo("Press the number key to select an option")
     while True:
-        user_input = click.prompt("Enter Selection", type=int)
-        if 0 < user_input <= len(options):
-            return options[user_input - 1]
-        click.echo("Invalid choice. Please try again.")
+        char = click.getchar()
+        if char.isdigit():
+            user_input = int(char)
+            if 0 < user_input <= len(options):
+                click.echo()  # Move to a new line after selection
+                return options[user_input - 1]
+        click.echo("\nInvalid choice. Please try again.")
 
 # Load environment variables from .env file
 load_dotenv()

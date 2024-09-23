@@ -64,23 +64,34 @@ def remove_host(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], grou
     del config[group][host]
 
 def edit_group(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], old_group: str, new_group: str) -> None:
-    """Edit a group name in the configuration."""
+    """Edit a group name in the configuration while preserving order."""
     if old_group not in config:
         raise ValueError(f"Group '{old_group}' does not exist.")
     if new_group in config:
         raise ValueError(f"Group '{new_group}' already exists.")
-    config[new_group] = config.pop(old_group)
+    items = list(config.items())
+    for i, (key, value) in enumerate(items):
+        if key == old_group:
+            items[i] = (new_group, value)
+            break
+    config.clear()
+    config.update(items)
 
 def edit_host(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group: str, old_host: str, new_host: str, new_config: Dict[str, Any]) -> None:
-    """Edit a host's name and configuration in a group."""
+    """Edit a host's name and configuration in a group while preserving order."""
     if group not in config:
         raise ValueError(f"Group '{group}' does not exist.")
     if old_host not in config[group]:
-        raise ValueError(f"host '{old_host}' does not exist in group '{group}'.")
+        raise ValueError(f"Host '{old_host}' does not exist in group '{group}'.")
     if new_host in config[group] and old_host != new_host:
-        raise ValueError(f"host '{new_host}' already exists in group '{group}'.")
-    del config[group][old_host]
-    config[group][new_host] = new_config
+        raise ValueError(f"Host '{new_host}' already exists in group '{group}'.")
+    items = list(config[group].items())
+    for i, (key, value) in enumerate(items):
+        if key == old_host:
+            items[i] = (new_host, new_config)
+            break
+    config[group].clear()
+    config[group].update(items)
 
 def create_sample_config() -> OrderedDict[str, OrderedDict[str, Dict[str, Any]]]:
     """Create and return a sample configuration."""
