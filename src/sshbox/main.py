@@ -194,7 +194,7 @@ def edit():
         
         save_json_config(configs, config_file)
         
-        if not click.confirm(f"Edit Another {choice}?"):
+        if not click.confirm(f"Edit Another?"):
             break
 
 if __name__ == '__main__':
