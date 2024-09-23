@@ -14,6 +14,8 @@
 - Config file `sshbox.json` will be created in `~/.ssh/sshbox.json` when you first run the app
   - To override this behavior, set the `SSHBOX_CONFIG_FILE` environment variable to the path of your file.
 
+  - A generic config file will be created when you first run the app
+
   - Example **Linux**: `export SSHBOX_CONFIG_FILE='/your/preferred/path/file_name.json'`
   - Example **Windows**: `set SSHBOX_CONFIG_FILE='/your/preferred/path/file_name.json`
 

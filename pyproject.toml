@@ -1,6 +1,6 @@
 [project]
 name = "sshbox"
-version = "0.6.0"
+version = "0.6.1"
 description = "CLI for managing SSH connections using JSON configuration"
 authors = [
     {name = "kwilt", email = "kwilt@pm.me"},
