@@ -10,3 +10,5 @@
 - `sshbox remove` - Remove a group or host from the configuration
 
 Config file `sshbox.json` will be created in `~/.ssh/sshbox.json`
+
+![sshbox screenshot](image.png)
