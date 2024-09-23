@@ -1,9 +1,9 @@
 import json
 import os
 from collections import OrderedDict
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Union
 
-def load_json_config(file_path: str) -> OrderedDict[str, OrderedDict[str, Dict[str, Any]]]:
+def load_json_config(file_path: str) -> OrderedDict[str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]]:
     """Load and parse the JSON configuration file."""
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Configuration file not found: {file_path}")
@@ -18,15 +18,23 @@ def load_json_config(file_path: str) -> OrderedDict[str, OrderedDict[str, Dict[s
         except json.JSONDecodeError as e:
             raise ValueError(f"Invalid JSON in configuration file: {file_path}\n{str(e)}")
 
-def save_json_config(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], file_path: str) -> None:
+def save_json_config(config: OrderedDict[str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]], file_path: str) -> None:
     """Save the configuration to the JSON file."""
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     with open(file_path, 'w') as file:
         json.dump(config, file, indent=2)
 
-def get_groups(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]]) -> List[str]:
+def get_groups(config: OrderedDict[str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]]) -> List[str]:
     """Return a list of all groups in the configuration."""
-    return list(config.keys())
+    return [key for key, value in config.items() if isinstance(value, OrderedDict)]
+
+def get_app_settings(config: OrderedDict[str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]]) -> Dict[str, Any]:
+    """Return the app settings from the configuration."""
+    return config.get("app_settings", {})
+
+def set_app_settings(config: OrderedDict[str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]], settings: Dict[str, Any]) -> None:
+    """Set the app settings in the configuration."""
+    config["app_settings"] = settings
 
 def get_hosts_in_group(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group: str) -> List[str]:
     """Return a list of hosts in the specified group."""
@@ -94,9 +102,18 @@ def edit_host(config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]], group:
     config[group].clear()
     config[group].update(items)
 
-def create_sample_config() -> OrderedDict[str, OrderedDict[str, Dict[str, Any]]]:
+def create_sample_config() -> OrderedDict[str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]]:
     """Create and return a sample configuration."""
     return OrderedDict([
+        ("app_settings", {
+            "table_colors": {
+                "group": "cyan",
+                "host": "green",
+                "hostname": "yellow",
+                "username": "magenta",
+                "port": "blue"
+            }
+        }),
         ("Development", OrderedDict([
             ("web-host", {
                 "hostname": "dev.example.com",
