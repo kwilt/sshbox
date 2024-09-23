@@ -16,10 +16,14 @@ from .json_config import (
 
 console = Console()
 
+from rich.text import Text
+
 def select_option(options, prompt_text):
+    # Create a Text object with no_wrap=True
+    title = Text(prompt_text, style="bold", no_wrap=True)
+    console.print(title)
+
     table = Table(
-        title=prompt_text,
-        title_style="bold",
         box=box.ROUNDED,
         show_header=False,
         show_edge=True,
