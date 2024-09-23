@@ -27,7 +27,7 @@ def select_option(options, prompt_text):
     
     # Determine if we're selecting a Host or a Group
     value_column_name = "Group" if "Select Group" in prompt_text else "Host"
-    table.add_column(value_column_name, style="magenta", justify="left")
+    table.add_column(value_column_name, style="magenta", justify="center")
 
     for index, option in enumerate(options, start=1):
         table.add_row(str(index), option)
