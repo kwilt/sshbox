@@ -33,11 +33,16 @@ def select_option(options, prompt_text, is_group=False):
 
     # Add two columns: one for the index, one for the option
     table.add_column("Index", style=table_colors.get("selection_number", "cyan"), justify="right")
-    option_style = table_colors.get("group", "green") if is_group else table_colors.get("hostname", "yellow")
-    table.add_column("Option", style=option_style, justify="left")
+    table.add_column("Option", justify="left")
 
     for index, option in enumerate(options, start=1):
-        table.add_row(f"{index}", option)
+        if option in ['Host', 'Group']:
+            option_style = table_colors.get("hostname" if option == 'Host' else "group", "yellow")
+            option_text = Text(option, style=option_style)
+        else:
+            option_style = table_colors.get("group" if is_group else "hostname", "yellow")
+            option_text = Text(option, style=option_style)
+        table.add_row(f"{index}", option_text)
 
     console.print(table)
 
