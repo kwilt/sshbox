@@ -19,7 +19,7 @@
   - A generic config file will be created when you first run the app
 
   - Example **Linux**: `export SSHBOX_CONFIG_FILE='/your/preferred/path/file_name.json'`
-  - Example **Windows**: `set SSHBOX_CONFIG_FILE='/your/preferred/path/file_name.json`
+  - Example **Windows**: `SETX SSHBOX_CONFIG_FILE C:\your\preferred\path\file_name.json /M` (restart terminal after setting)
 
   - You can change the colors of text in the table by setting values in `table_colors`.
     - Valid color names are here: https://rich.readthedocs.io/en/stable/appendix/colors.html
