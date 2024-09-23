@@ -23,14 +23,13 @@ def select_option(options, prompt_text):
     table_width = int(terminal_width * 0.6)
     
     table = Table(title=prompt_text, title_style="bold", title_justify="center", width=table_width, expand=False)
-    table.add_column("Option", style="cyan", no_wrap=True, justify="center", width=4)
     
     # Determine if we're selecting a Host or a Group
     value_column_name = "Group" if "Select Group" in prompt_text else "Host"
-    table.add_column(value_column_name, style="magenta", justify="center")
+    table.add_column(value_column_name, style="magenta", justify="left")
 
     for index, option in enumerate(options, start=1):
-        table.add_row(str(index), option)
+        table.add_row(f"[cyan]{index}.[/cyan] {option}")
 
     # Wrap the table in an Align object to center it
     centered_table = Align.center(table)
