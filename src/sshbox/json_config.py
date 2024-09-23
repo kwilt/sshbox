@@ -107,11 +107,9 @@ def create_sample_config() -> OrderedDict[str, Union[Dict[str, Any], OrderedDict
     return OrderedDict([
         ("app_settings", {
             "table_colors": {
-                "group": "cyan",
-                "host": "green",
+                "selection_number": "cyan",
                 "hostname": "yellow",
-                "username": "magenta",
-                "port": "blue"
+                "group": "green"
             }
         }),
         ("Development", OrderedDict([
