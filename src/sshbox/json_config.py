@@ -90,7 +90,9 @@ def get_hosts_in_group(
 
 
 def get_host_config(
-    config: OrderedDict[str, OrderedDict[str, Dict[str, Any]]],
+    config: OrderedDict[
+        str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]
+    ],
     group: str,
     host: str,
 ) -> Dict[str, Any]:
