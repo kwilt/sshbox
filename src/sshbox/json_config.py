@@ -130,7 +130,7 @@ def create_sample_config() -> OrderedDict[str, Union[Dict[str, Any], OrderedDict
             ("database", {
                 "hostname": "db.dev.example.com",
                 "username": "dbadmin",
-                "port": 2222
+                "port": 22
             })
         ])),
         ("Production", OrderedDict([

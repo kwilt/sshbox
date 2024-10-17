@@ -46,7 +46,7 @@ This will be generated when you run the app for the first time without an existi
     "database": {
       "hostname": "db.dev.example.com",
       "username": "dbadmin",
-      "port": 2222
+      "port": 22
     }
   },
   "Production": {
