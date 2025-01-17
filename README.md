@@ -3,7 +3,8 @@
 ![sshbox screenshot](image.png)
 
 ## Install:
-`pipx install git+https://github.com/kwilt/sshbox.git`
+`pipx install sshbox`
+`pip install sshbox`
 
 ## How To Use
 - `sshbox` - connect to a host
