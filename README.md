@@ -4,7 +4,6 @@
 
 ## Install:
 `pipx install sshbox`
-`pip install sshbox`
 
 ## How To Use
 - `sshbox` - connect to a host
