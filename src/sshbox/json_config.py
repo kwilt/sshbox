@@ -1,12 +1,12 @@
 import json
 import os
 from collections import OrderedDict
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 
 
 def load_json_config(
     file_path: str,
-) -> OrderedDict[str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]]:
+) -> None:
     """Load and parse the JSON configuration file."""
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Configuration file not found: {file_path}")
@@ -17,9 +17,7 @@ def load_json_config(
             raise ValueError(f"Configuration file is empty: {file_path}")
 
         try:
-            return json.loads(
-                content, object_pairs_hook=lambda x: OrderedDict(x)
-            )
+            return json.loads(content, object_pairs_hook=lambda x: OrderedDict(x))
         except json.JSONDecodeError as e:
             raise ValueError(
                 f"Invalid JSON in configuration file: {file_path}\n{str(e)}"
@@ -27,9 +25,7 @@ def load_json_config(
 
 
 def save_json_config(
-    config: OrderedDict[
-        str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]
-    ],
+    config,
     file_path: str,
 ) -> None:
     """Save the configuration to the JSON file."""
@@ -39,9 +35,7 @@ def save_json_config(
 
 
 def get_groups(
-    config: OrderedDict[
-        str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]
-    ]
+    config,
 ) -> List[str]:
     """Return a list of all groups in the configuration, excluding app_settings."""
     return [
@@ -52,9 +46,7 @@ def get_groups(
 
 
 def get_app_settings(
-    config: OrderedDict[
-        str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]
-    ]
+    config,
 ) -> Dict[str, Any]:
     """Return the app settings from the configuration."""
     default_settings = {
@@ -70,9 +62,7 @@ def get_app_settings(
 
 
 def set_app_settings(
-    config: OrderedDict[
-        str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]
-    ],
+    config,
     settings: Dict[str, Any],
 ) -> None:
     """Set the app settings in the configuration."""
@@ -80,9 +70,7 @@ def set_app_settings(
 
 
 def get_hosts_in_group(
-    config: OrderedDict[
-        str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]
-    ],
+    config,
     group: str,
 ) -> List[str]:
     """Return a list of hosts in the specified group."""
@@ -90,9 +78,7 @@ def get_hosts_in_group(
 
 
 def get_host_config(
-    config: OrderedDict[
-        str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]
-    ],
+    config,
     group: str,
     host: str,
 ) -> Dict[str, Any]:
@@ -101,9 +87,7 @@ def get_host_config(
 
 
 def add_group(
-    config: OrderedDict[
-        str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]
-    ],
+    config,
     group: str,
 ) -> None:
     """Add a new group to the configuration."""
@@ -113,60 +97,52 @@ def add_group(
 
 
 def add_host(
-    config: OrderedDict[
-        str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]
-    ],
+    config,
     group: str,
     host: str,
     host_config: Dict[str, Any],
 ) -> None:
     """Add a new host to a group in the configuration."""
     if group not in config:
-        raise ValueError(f"Group '{group}' does not exist.")
+        raise ValueError(f"Group: {group} does not exist")
     if host in config[group]:
-        raise ValueError(f"host '{host}' already exists in group '{group}'.")
+        raise ValueError(f"Host: {host} already exists in group: {group}")
     config[group][host] = host_config
 
 
 def remove_group(
-    config: OrderedDict[
-        str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]
-    ],
+    config,
     group: str,
 ) -> None:
     """Remove a group from the configuration."""
     if group not in config:
-        raise ValueError(f"Group '{group}' does not exist.")
+        raise ValueError(f"Group: {group} does not exist")
     del config[group]
 
 
 def remove_host(
-    config: OrderedDict[
-        str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]
-    ],
+    config,
     group: str,
     host: str,
 ) -> None:
     """Remove a host from a group in the configuration."""
     if group not in config:
-        raise ValueError(f"Group '{group}' does not exist.")
+        raise ValueError(f"Group: {group} does not exist")
     if host not in config[group]:
-        raise ValueError(f"host '{host}' does not exist in group '{group}'.")
+        raise ValueError(f"Host: {host} does not exist in group: {group}")
     del config[group][host]
 
 
 def edit_group(
-    config: OrderedDict[
-        str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]
-    ],
+    config,
     old_group: str,
     new_group: str,
 ) -> None:
     """Edit a group name in the configuration while preserving order."""
     if old_group not in config:
-        raise ValueError(f"Group '{old_group}' does not exist.")
+        raise ValueError(f"Group: {old_group} does not exist")
     if new_group in config:
-        raise ValueError(f"Group '{new_group}' already exists.")
+        raise ValueError(f"Group: {new_group} already exists")
     items = list(config.items())
     for i, (key, value) in enumerate(items):
         if key == old_group:
@@ -177,9 +153,7 @@ def edit_group(
 
 
 def edit_host(
-    config: OrderedDict[
-        str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]
-    ],
+    config,
     group: str,
     old_host: str,
     new_host: str,
@@ -187,17 +161,13 @@ def edit_host(
 ) -> None:
     """Edit a host's name and configuration in a group while preserving order."""
     if group not in config:
-        raise ValueError(f"Group '{group}' does not exist.")
+        raise ValueError(f"Group: {group} does not exist")
     if old_host not in config[group]:
-        raise ValueError(
-            f"Host '{old_host}' does not exist in group '{group}'."
-        )
+        raise ValueError(f"Host: {old_host} does not exist in group: {group}")
     if new_host in config[group] and old_host != new_host:
-        raise ValueError(
-            f"Host '{new_host}' already exists in group '{group}'."
-        )
+        raise ValueError(f"Host: {new_host} already exists in group: {group}")
     items = list(config[group].items())
-    for i, (key, value) in enumerate(items):
+    for i, (key, _) in enumerate(items):
         if key == old_host:
             items[i] = (new_host, new_config)
             break
@@ -205,9 +175,7 @@ def edit_host(
     config[group].update(items)
 
 
-def create_sample_config() -> (
-    OrderedDict[str, Union[Dict[str, Any], OrderedDict[str, Dict[str, Any]]]]
-):
+def create_sample_config():
     """Create and return a sample configuration."""
     return OrderedDict(
         [

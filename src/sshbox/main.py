@@ -29,21 +29,23 @@ def select_option(options, prompt_text, is_group=False):
     app_settings = get_app_settings(configs)
     table_colors = app_settings.get("table_colors", {})
 
-    # Create a Text object with no_wrap=True
-    title = Text(prompt_text, style="bold", no_wrap=True)
-    console.print(title)
-
     table = Table(
+        title=prompt_text,
+        title_style="bold",
+        title_justify="center",
         box=box.ROUNDED,
         show_header=False,
         show_edge=True,
+        min_width=len(prompt_text) + 4,  # So that word wrapping doesn't occur
+        # when selecting between Host/Group using `sshbox edit/remove`
     )
 
     # Add two columns: one for the index, one for the option
+    # Default to cyan for the selection numbers
     table.add_column(
         "Index",
         style=table_colors.get("selection_number", "cyan"),
-        justify="right",
+        justify="center",
     )
     table.add_column("Option", justify="left")
 
@@ -73,9 +75,7 @@ def select_option(options, prompt_text, is_group=False):
 
 
 # Get the JSON config file path from environment variable or use a default
-config_file = os.getenv(
-    "SSHBOX_CONFIG_FILE", os.path.expanduser("~/.ssh/sshbox.json")
-)
+config_file = os.getenv("SSHBOX_CONFIG_FILE", os.path.expanduser("~/.ssh/sshbox.json"))
 
 try:
     # Load the JSON configuration
@@ -84,18 +84,28 @@ except FileNotFoundError:
     # If the file doesn't exist, create it with sample configuration
     configs = create_sample_config()
     save_json_config(configs, config_file)
-    click.echo(f"Created sample configuration file: {config_file}")
+    click.echo(
+        click.style(f"Created sample configuration file: {config_file}", fg="green")
+    )
 except ValueError as e:
     if "Configuration file is empty" in str(e):
         # If the file is empty, create sample configuration
         configs = create_sample_config()
         save_json_config(configs, config_file)
-        click.echo(f"Created sample configuration in empty file: {config_file}")
+        click.echo(
+            click.style(
+                f"Created sample configuration in empty file: {config_file}",
+                fg="green",
+            )
+        )
     else:
-        click.echo(f"Error loading configuration: {str(e)}", err=True)
+        click.echo(
+            click.style(f"Error loading configuration: {str(e)}", err=True, fg="green")
+        )
         exit(1)
 
 
+# If only `sshbox` is run (no arguments) treat it as an attempt to connect to a host
 @click.group(invoke_without_command=True)
 @click.pass_context
 def cli(ctx):
@@ -121,27 +131,25 @@ def connect():
         f"{host_config['username']}@{host_config['hostname']}",
     ]
 
-    click.echo(f"Connecting to {host}...")
+    click.echo(f"Attempting connection to {host}...")
     subprocess.run(ssh_command)
 
 
 @cli.command()
 def add():
     """Add a new group or host to the configuration."""
-    choice = select_option(
-        ["Host", "Group"], "Add New Host Or Group?", is_group=True
-    )
+    choice = select_option(["Host", "Group"], "Add New Host Or Group?", is_group=True)
 
     if choice == "Group":
         group = click.prompt("Enter New Group")
         try:
             add_group(configs, group)
-            click.echo(f"'{group}' added successfully.")
+            click.echo(click.style(f"{group} added successfully", fg="green"))
 
             if click.confirm(f"Add Host To {group}?"):
                 add_host_to_group(group)
         except ValueError as e:
-            click.echo(f"Error: {str(e)}")
+            click.echo(click.style(f"Error: {str(e)}", fg="red"))
     else:
         add_host_to_group()
 
@@ -160,14 +168,20 @@ def add_host_to_group(group=None):
         username = click.prompt("Enter Username")
         port = click.prompt("Enter Port", default=22, type=int)
 
-        host_config = {"hostname": hostname, "username": username, "port": port}
+        host_config = {
+            "hostname": hostname,
+            "username": username,
+            "port": port,
+        }
 
         try:
             add_host(configs, group, host, host_config)
             save_json_config(configs, config_file)
-            click.echo(f"'{host}' added successfully to '{group}'")
+            click.echod(
+                click.style(f"{host} added successfully to {group}", fg="green")
+            )
         except ValueError as e:
-            click.echo(f"Error: {str(e)}")
+            click.echo(click.style(f"Error: {str(e)}", fg="red"))
             continue
 
         if not click.confirm(f"Add Another Host To {group}?"):
@@ -184,15 +198,15 @@ def remove():
 
         if choice == "Group":
             groups = get_groups(configs)
-            group = select_option(
-                groups, "Select Group For Removal", is_group=True
-            )
+            group = select_option(groups, "Select Group For Removal", is_group=True)
 
             try:
                 remove_group(configs, group)
-                click.echo(f"Group '{group}' removed successfully")
+                click.echo(
+                    click.style(f"Group: {group} removed successfully", fg="green")
+                )
             except ValueError as e:
-                click.echo(f"Error: {str(e)}")
+                click.echo(click.style(f"Error: {str(e)}", fg="red"))
         else:
             groups = get_groups(configs)
             group = select_option(groups, "Select Group")
@@ -202,9 +216,11 @@ def remove():
 
             try:
                 remove_host(configs, group, host)
-                click.echo(f"'{host}' removed successfully from '{group}'")
+                click.echo(
+                    click.style(f"{host} removed successfully from {group}", fg="green")
+                )
             except ValueError as e:
-                click.echo(f"Error: {str(e)}")
+                click.echo(click.style(f"Error: {str(e)}", fg="red"))
 
         save_json_config(configs, config_file)
 
@@ -216,24 +232,23 @@ def remove():
 def edit():
     """Edit a group or host in the configuration."""
     while True:
-        choice = select_option(
-            ["Host", "Group"], "Edit Host Or Group?", is_group=True
-        )
+        choice = select_option(["Host", "Group"], "Edit Host Or Group?", is_group=True)
 
         if choice == "Group":
             groups = get_groups(configs)
-            old_group = select_option(
-                groups, "Select Group To Edit", is_group=True
-            )
+            old_group = select_option(groups, "Select Group To Edit", is_group=True)
 
-            new_group = click.prompt(f"Enter New Name For Group: '{old_group}'")
+            new_group = click.prompt(f"Enter New Name For Group: {old_group}")
             try:
                 edit_group(configs, old_group, new_group)
                 click.echo(
-                    f"'{old_group}' successfully renamed to '{new_group}'"
+                    click.style(
+                        f"{old_group} successfully renamed to {new_group}",
+                        fg="green",
+                    )
                 )
             except ValueError as e:
-                click.echo(f"Error: {str(e)}")
+                click.echo(click.style(f"Error: {str(e)}", fg="red"))
         else:
             groups = get_groups(configs)
             group = select_option(groups, "Select Group To Edit")
@@ -242,7 +257,7 @@ def edit():
             old_host = select_option(hosts, "Select Host To Edit")
 
             new_host = click.prompt(
-                f"Enter New Name For Host: '{old_host}' (press Enter to keep the same name)",
+                f"Enter New Name For Host: {old_host}",
                 default=old_host,
             )
             hostname = click.prompt(
@@ -267,9 +282,14 @@ def edit():
 
             try:
                 edit_host(configs, group, old_host, new_host, new_config)
-                click.echo(f"'{old_host}' in '{group}' successfully updated")
+                click.echo(
+                    click.style(
+                        f"{old_host} in {group} successfully updated",
+                        fg="green",
+                    )
+                )
             except ValueError as e:
-                click.echo(f"Error: {str(e)}")
+                click.echo(click.style(f"Error: {str(e)}", fg="red"))
 
         save_json_config(configs, config_file)
 
